@@ -1,0 +1,18 @@
+specVersion: 1
+type: plugin
+name: Punishment
+authors:
+  - mrtz6
+supportedPlatforms:
+  - spigot
+supportedGameVersions: 1.19.2
+category: misc
+introduction: Ein minimalistisches Troll/Bestrafungs-Plugin
+description: |
+  # Überblick
+  Dieses Plugin ermöglicht es Spieler auf verschiedene Wege zu trollen/bestrafen. Nach dem Ausführen des Befehls wird ein Inventarmenü geöffnet, welches die Auswahl der verschieden Bestrafmöglichkeiten ermöglicht.
+  # Benutzung
+  /punish <player>
+images:
+  - https://i.ibb.co/MkcrH6H/image.png
+icon: https://cdn-icons-png.flaticon.com/512/3158/3158109.png

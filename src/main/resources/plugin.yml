@@ -2,7 +2,7 @@ name: Punishment
 version: '${project.version}'
 main: de.mrtz.punishment.PunishmentPlugin
 api-version: 1.19
-authors: [ mrtz ]
+authors: [ mrtz6 ]
 commands:
   punish:
     description: Punish a player
