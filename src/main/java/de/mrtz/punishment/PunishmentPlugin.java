@@ -22,7 +22,7 @@ import java.util.Set;
 
 public final class PunishmentPlugin extends JavaPlugin implements Listener
 {
-    private final String INVENTORY_TITLE = "Punishments";
+    private final String INVENTORY_TITLE = "Punishing";
 
     private static PunishmentPlugin instance;
 
@@ -87,10 +87,11 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
         if (target == null)
         {
             player.sendMessage(ChatColor.RED + args[0] + " is not online!");
+            return true;
         }
 
         int essentialCount = 0;
-        Inventory inventory = Bukkit.createInventory(null, 9 * 3, INVENTORY_TITLE);
+        Inventory inventory = getServer().createInventory(null, 9 * 3, INVENTORY_TITLE + " " + target.getName());
         for (Punishment punishment: punishments)
         {
             ItemStack itemStack = new ItemStack(punishment.getIconMaterial());
@@ -136,10 +137,19 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
         Inventory inventory = event.getClickedInventory();
         ItemStack itemStack = event.getCurrentItem();
 
-        if (event.getView().getTitle().equals(INVENTORY_TITLE))
+        if (event.getView().getTitle().startsWith(INVENTORY_TITLE))
             event.setCancelled(true);
         else
             return;
+
+        Player target = getServer().getPlayer(event.getView().getTitle().split(" ")[1]);
+
+        if (target == null)
+        {
+            player.sendMessage(ChatColor.RED + "The player is not online anymore.");
+            player.closeInventory();
+            return;
+        }
 
         for (Punishment punishment : punishments)
         {
@@ -147,7 +157,7 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
 
             if (itemMeta.getDisplayName().equals(ChatColor.YELLOW + punishment.getName()))
             {
-                punishment.punish(player);
+                punishment.punish(target);
 
                 player.sendMessage(ChatColor.GREEN + "The player has been punished!");
             }
