@@ -88,6 +88,7 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
         if (target == null)
         {
             player.sendMessage(ChatColor.RED + args[0] + " is not online!");
+            player.sendMessage(ChatColor.GOLD + "This is a test");
             return true;
         }
 
