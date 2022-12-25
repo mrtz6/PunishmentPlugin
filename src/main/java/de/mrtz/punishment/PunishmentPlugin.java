@@ -2,6 +2,7 @@ package de.mrtz.punishment;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -158,6 +159,9 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
             if (itemMeta.getDisplayName().equals(ChatColor.YELLOW + punishment.getName()))
             {
                 punishment.punish(target);
+                player.closeInventory();
+
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1, 1f);
 
                 player.sendMessage(ChatColor.GREEN + "The player has been punished!");
             }
