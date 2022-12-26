@@ -1,5 +1,6 @@
 package de.mrtz.punishment;
 
+import de.mrtz.mplugin.command.MCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -19,11 +20,12 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public final class PunishmentPlugin extends JavaPlugin implements Listener
 {
-    private final String INVENTORY_TITLE = "Punishing";
+    public static final String INVENTORY_TITLE = "Punishing";
 
     private static PunishmentPlugin instance;
 
@@ -35,6 +37,8 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
         instance = this;
 
         registerPunishments();
+
+        MCommand.registerCommands(this, getClass().getPackage().getName() + ".command");
 
         getServer().getPluginManager().registerEvents(this, this);
     }
@@ -58,71 +62,6 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
-        if (!(sender instanceof Player))
-        {
-            sender.sendMessage(ChatColor.RED + "This command can only be executed by a player.");
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("punishment.use"))
-        {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to execute this command!");
-            return true;
-        }
-
-        if (args.length != 1)
-        {
-            player.sendMessage(ChatColor.RED + "Correct Usage: /punish <player>");
-            return true;
-        }
-
-        Player target = getServer().getPlayer(args[0]);
-
-        if (target == null)
-        {
-            player.sendMessage(ChatColor.RED + args[0] + " is not online!");
-            player.sendMessage(ChatColor.GOLD + "This is a test");
-            return true;
-        }
-
-        int essentialCount = 0;
-        Inventory inventory = getServer().createInventory(null, 9 * 3, INVENTORY_TITLE + " " + target.getName());
-        for (Punishment punishment: punishments)
-        {
-            ItemStack itemStack = new ItemStack(punishment.getIconMaterial());
-            ItemMeta itemMeta = itemStack.getItemMeta();
-
-            itemMeta.setDisplayName(ChatColor.YELLOW + punishment.getName());
-            itemMeta.addItemFlags(ItemFlag.values());
-
-            ArrayList<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + punishment.getDescription());
-
-            itemMeta.setLore(lore);
-
-            itemStack.setItemMeta(itemMeta);
-
-            if (punishment.isEssential())
-            {
-                inventory.setItem(inventory.getSize() - 1 - essentialCount, itemStack);
-                essentialCount++;
-            }
-            else
-            {
-                inventory.addItem(itemStack);
-            }
-        }
-
-        player.openInventory(inventory);
-
-        return true;
     }
 
     @EventHandler
@@ -157,16 +96,21 @@ public final class PunishmentPlugin extends JavaPlugin implements Listener
         {
             ItemMeta itemMeta = itemStack.getItemMeta();
 
-            if (itemMeta.getDisplayName().equals(ChatColor.YELLOW + punishment.getName()))
-            {
-                punishment.punish(target);
-                player.closeInventory();
+            if (!itemMeta.getDisplayName().equals(ChatColor.YELLOW + punishment.getName()))
+                continue;
 
-                player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1, 1f);
+            punishment.punish(target);
+            player.closeInventory();
 
-                player.sendMessage(ChatColor.GREEN + "The player has been punished!");
-            }
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1, 1f);
+
+            player.sendMessage(ChatColor.GREEN + "The player has been punished!");
         }
+    }
+
+    public List<Punishment> getPunishments()
+    {
+        return punishments;
     }
 
     public static PunishmentPlugin getInstance()

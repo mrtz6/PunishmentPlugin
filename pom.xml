@@ -75,5 +75,10 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>de.mrtz</groupId>
+            <artifactId>MPlugin</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>
